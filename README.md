@@ -79,13 +79,13 @@ never asks you to paste secret values into chat, and starts by running
 ## Run the sample tests locally (no Jira needed)
 
 ```bash
-npx bddgen test
-npx playwright test
+npm test
 ```
 
 Expected output: **1 passed, 1 failed** — and the exit code is **non-zero on
-purpose**. Run `npx bddgen test` first: it generates the test files from the
-Gherkin features (they live in `.features-gen/` and are not committed). The
+purpose**. `npm test` runs `bddgen test` first: it generates the test files
+from the Gherkin features (they live in `.features-gen/` and are not
+committed), then runs Playwright. The
 passing scenario checks the real Playwright title; the expected-fail demo
 asserts a wrong title to demonstrate failure reporting. Locally the browser
 opens headed and traces are recorded; a junit report is written to
