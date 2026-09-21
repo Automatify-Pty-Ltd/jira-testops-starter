@@ -8,7 +8,7 @@ blob-report/
 playwright/.cache/
 
 # Generated BDD step bindings (run `npm run bdd:generate` to recreate)
-.features-steps/
+.features-gen/
 
 # Environment / secrets — never commit
 .env

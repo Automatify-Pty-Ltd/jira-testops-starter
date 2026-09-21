@@ -87,7 +87,7 @@ jobs:
           cat features/dispatched.feature
 
       - name: Generate BDD tests
-        run: npx playwright-bdd generate
+        run: npx bddgen test
 
       - name: Report running status to Forge
         if: ${{ inputs.project_key != '' && inputs.scenario_id != '' }}

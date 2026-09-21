@@ -11,10 +11,5 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true
   },
-  "include": [
-    "playwright.config.ts",
-    "features/**/*.ts",
-    "steps/**/*.ts",
-    ".features-steps/**/*.ts"
-  ]
+  "include": ["playwright.config.ts", "features/**/*.ts", "steps/**/*.ts", ".features-gen/**/*.ts"]
 }

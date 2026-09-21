@@ -23,7 +23,7 @@
     "test": "playwright test",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "bdd:generate": "playwright-bdd generate",
+    "bdd:generate": "bddgen test",
     "testops-wizard": "node scripts/testops-wizard.mjs"
   },
   "dependencies": {
