@@ -8,6 +8,14 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  reporter: [['list'], ['junit', { outputFile: 'test-results/junit.xml' }]],
+  reporter: [
+    ['list'],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
+    ['html', { open: 'never' }],
+  ],
+  use: {
+    trace: process.env.CI ? 'retain-on-failure' : 'on',
+    headless: !!process.env.CI,
+  },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });

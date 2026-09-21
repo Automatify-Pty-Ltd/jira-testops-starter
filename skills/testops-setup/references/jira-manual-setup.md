@@ -12,12 +12,13 @@ ending at "Ready — All set: the project is ready to run automation."
 1. Open the project board, e.g.
    `https://your-site.atlassian.net/jira/software/projects/KAN/boards/1`.
 2. Click the "Automatify TestOps" tab (board top tabs) → "Automation" sub-tab.
-   The panel has the "Automation" and "CLI" sub-tabs; Automation shows the
-   "Scenario bindings" and "Profiles" sections.
+   The panel has the "Automation" and "CLI" sub-tabs; "Automation" contains
+   the "Profiles" and "Scenario bindings" tabs.
 
 ## Create the automation profile
 
-1. "Profiles" sub-tab → "Create profile" → provider tile "GitHub Actions".
+1. "Automation" sub-tab → "Profiles" tab → "Create profile" → provider tile
+   "GitHub Actions".
 2. Fill the form (field labels verbatim):
 
    | Field | What to enter |
@@ -52,6 +53,9 @@ issue (e.g. a story): "Automatify TestOps" panel → "New scenario" → the
 "Create scenario" dialog opens ("Create a new manual scenario linked to this
 issue."). The dialog takes fields + steps — never a pasted Gherkin feature
 file; the issue links automatically.
+
+If the "Automatify TestOps" panel is not displayed on the issue, scroll to the
+top and click "View app actions" next to the "+" button to open it.
 
 Field mapping for the two sample scenarios in `features/playwright-docs.feature`:
 

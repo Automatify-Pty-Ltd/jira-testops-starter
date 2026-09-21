@@ -42,20 +42,28 @@ state first (run `npm install`, run from the repo root).
    `references/jira-manual-setup.md` (§ Create the automation profile).
 3. **Set default** (HITL) — profile card → "Set default". Expected: "Default
    profile: <label>" in the Automation overview.
-4. **Add the 2 GitHub repository secrets** (HITL) — the values come from the
-   Jira "CLI" sub-tab ("Create CLI key"); the user adds both secrets in GitHub.
-   Names, PAT scopes, click path: `references/github-secrets.md`.
-5. **Create the 2 scenarios and bind the profile** (HITL) — on a Jira issue:
-   "Automatify TestOps" panel → "New scenario" → the "Create scenario" dialog
-   takes fields + steps (never a pasted feature file). The scenario "Steps" are
-   the binding contract — they must match the sample step definitions exactly.
-   Then "Scenario bindings" → each scenario → "Bind profile". Field mapping and
-   Expected results: `references/jira-manual-setup.md` (§ Create the scenarios,
-   § Bind the profile).
-6. **Run and verify** (HITL) — "Run now" on a bound scenario. Expected: the
-   passing sample ends "passed"; the expected-fail demo ends "failed" by design;
-   the issue gets a status comment with the Actions run link. Problems:
-   `references/troubleshooting.md`.
+4. **Create the CLI key in Jira** (HITL) — "CLI" sub-tab → type a label into
+   "Key label" → "Create CLI key". The one-time key and the endpoint URL are
+   copied here and used in Step 5.
+5. **Add the 2 GitHub repository secrets** (HITL) — the user adds both secrets
+   in GitHub under Settings → Secrets and variables → Actions. Names, PAT
+   scopes, click path: `references/github-secrets.md`.
+6. **Create the 2 scenarios in Jira** (HITL) — on a Jira issue: "Automatify
+   TestOps" panel → "New scenario" → the "Create scenario" dialog takes fields
+   + steps (never a pasted feature file). The scenario "Steps" are the binding
+   contract — they must match the sample step definitions exactly, one step per
+   line. Field mapping and Expected results: `references/jira-manual-setup.md`
+   (§ Create the scenarios).
+7. **Bind the profile to the scenarios** (HITL) — "Scenario bindings" → each
+   scenario → "Bind profile". See `references/jira-manual-setup.md`
+   (§ Bind the profile).
+8. **Run the scenarios locally** — `npx bddgen test`, then
+   `npx playwright test` (1 passed + 1 failed by design).
+9. **View the Playwright report** — `npx playwright show-report`.
+10. **Run and verify in Jira** (HITL) — "Run now" on a bound scenario. Expected:
+    the passing sample ends "passed"; the expected-fail demo ends "failed" by
+    design; the issue gets a status comment with the Actions run link.
+    Problems: `references/troubleshooting.md`.
 
 ## Don't use for
 

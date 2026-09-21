@@ -13,7 +13,8 @@ secrets — without them Jira stays stuck "queued" after the run finishes.
 ## Get the values (Jira "CLI" sub-tab)
 
 1. Board → "Automatify TestOps" tab → "CLI" sub-tab.
-2. Click "Create CLI key" → label e.g. `wizard-key` → "Create CLI key".
+2. Type a label into "Key label", e.g. `github-actions-cli-key`.
+3. Click "Create CLI key".
 
 Expected: the one-time key is shown once — copy it. The endpoint URL is
 displayed — copy it. (If lost, create a new CLI key.)
@@ -32,10 +33,12 @@ Expected: both secrets listed under "Repository secrets".
 
 The Automation profile's "Secret token" is a GitHub PAT ("PAT or bearer token")
 with the `repo` and `workflow` scopes — TestOps uses it to POST the
-`workflow_dispatch` call to GitHub. Create it in GitHub: Settings → Developer
-settings → Personal access tokens. Enter it only in the Jira profile form
-(placeholder "PAT or bearer token"; on edit the placeholder reads "Leave blank
-to keep the current secret").
+`workflow_dispatch` call to GitHub. Create it in GitHub: your avatar (top
+right) → Settings → Developer settings → Personal access tokens →
+Tokens (classic) → "Generate new token (classic)" → tick `repo` and
+`workflow` → "Generate token" → copy the value (shown only once). Enter it
+only in the Jira profile form (placeholder "PAT or bearer token"; on edit the
+placeholder reads "Leave blank to keep the current secret").
 
 ## Rules for agents
 

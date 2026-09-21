@@ -57,15 +57,17 @@ Requires Node.js >= 20 and a Jira site with the Automatify TestOps app installed
    │                                                      │
    ╰──────────────────────────────────────────────────────╯
 
-   ◆  Step 1/6 · Preflight
+   ◆  Step 1/10 · Preflight
    │  ✓ Node v24.21.0 (≥ 20 required)
    │  ...
    ```
 
-   The wizard walks you through 6 steps: preflight → create the automation
-   profile in Jira → "Set default" → add the 2 GitHub repository secrets →
-   create the 2 scenarios and bind the profile → run and verify. Progress is
-   saved after every step; quit anytime and re-run the command to resume.
+   The wizard walks you through 10 steps: preflight → create the automation
+   profile in Jira → "Set default" → create the CLI key in Jira → add the
+   GitHub repository secrets → create the scenarios in Jira → bind the profile
+   to the scenarios → run the scenarios locally → view the Playwright report →
+   done. Progress is saved after every step; quit anytime and re-run the
+   command to resume.
 
 ## Prefer an agent?
 
@@ -77,13 +79,18 @@ never asks you to paste secret values into chat, and starts by running
 ## Run the sample tests locally (no Jira needed)
 
 ```bash
+npx bddgen test
 npx playwright test
 ```
 
 Expected output: **1 passed, 1 failed** — and the exit code is **non-zero on
-purpose**. The passing scenario checks the real Playwright title; the
-expected-fail demo asserts a wrong title to demonstrate failure reporting.
-A junit report is written to `test-results/junit.xml`.
+purpose**. Run `npx bddgen test` first: it generates the test files from the
+Gherkin features (they live in `.features-gen/` and are not committed). The
+passing scenario checks the real Playwright title; the expected-fail demo
+asserts a wrong title to demonstrate failure reporting. Locally the browser
+opens headed and traces are recorded; a junit report is written to
+`test-results/junit.xml` and an HTML report to `playwright-report/` — open it
+any time with `npx playwright show-report`.
 
 ## How TestOps runs work
 
@@ -112,9 +119,9 @@ Required repository secrets (values come from the Jira "CLI" sub-tab via
 |---|---|---|
 | Status `failed` right after Run now; GitHub has no run | Workflow id wrong OR file not on default branch (404) | Fix Workflow id / Ref; commit workflow to default branch |
 | Status `failed` right after Run now; GitHub shows nothing | Workflow doesn't declare Forge's inputs (422) | Declare all 10 dispatch inputs (or set Inputs template) |
-| Status stuck `queued` (GitHub run fails at the Forge report step, or ran without reporting) | Repo secrets `TESTOPS_FORGE_ENDPOINT` / `TESTOPS_FORGE_AUTH_TOKEN` missing (workflow cannot call Forge) | Add the 2 repo secrets (wizard Step 4) |
+| Status stuck `queued` (GitHub run fails at the Forge report step, or ran without reporting) | Repo secrets `TESTOPS_FORGE_ENDPOINT` / `TESTOPS_FORGE_AUTH_TOKEN` missing (workflow cannot call Forge) | Add the 2 repo secrets (wizard Step 5) |
 | "Automation profile limit reached" | Free tier = 1 profile | Edit/delete existing profile |
-| Run fails with "Missing step definitions" | Jira scenario steps differ from the template's step definitions | Paste the exact steps shown in wizard Step 5 |
+| Run fails with "Missing step definitions" | Jira scenario steps differ from the template's step definitions | Paste the exact steps shown in wizard Step 6 |
 
 Free tier limits: 1 automation profile, 25 scenarios, 100 automation runs per
 month.
