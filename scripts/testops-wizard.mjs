@@ -19,7 +19,10 @@ const loadCompleted = () => {
     const parsed = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
     if (parsed.version !== 2 || !Array.isArray(parsed.completed)) return [];
     return parsed.completed;
-  } catch {
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      p.log.warn(`Cannot read ${STATE_FILE} — starting from Step 1. Previous progress could not be restored.`);
+    }
     return [];
   }
 };
