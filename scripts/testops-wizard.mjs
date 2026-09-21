@@ -248,7 +248,7 @@ const STEP_HELP = {
     'Status stuck "queued" (GitHub run fails at the Forge report step, or ran without reporting) — repo secrets TESTOPS_FORGE_ENDPOINT / TESTOPS_FORGE_AUTH_TOKEN missing (workflow cannot call Forge). Fix: add the 2 repo secrets (Step 4).',
   ],
   5: [
-    'Run fails with "step not implemented" — Jira scenario steps differ from the template\'s step definitions. Fix: paste the exact steps shown in Step 5.',
+    'Run fails with "Missing step definitions" — Jira scenario steps differ from the template\'s step definitions. Fix: paste the exact steps shown in Step 5.',
   ],
 };
 
