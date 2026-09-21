@@ -96,7 +96,7 @@ jobs:
           TESTOPS_SCENARIO_ID: ${{ inputs.scenario_id }}
         run: |
           if [ -z "$TESTOPS_FORGE_ENDPOINT" ] || [ -z "$TESTOPS_FORGE_AUTH_TOKEN" ]; then
-            echo "Repo secrets TESTOPS_FORGE_ENDPOINT / TESTOPS_FORGE_AUTH_TOKEN are not set - add them under Settings -> Secrets and variables -> Actions (wizard Step 4)." >&2
+            echo "Repo secrets TESTOPS_FORGE_ENDPOINT / TESTOPS_FORGE_AUTH_TOKEN are not set - add them under Settings -> Secrets and variables -> Actions (wizard Step 5)." >&2
             exit 1
           fi
           cat > /tmp/forge-running-status.json <<JSON

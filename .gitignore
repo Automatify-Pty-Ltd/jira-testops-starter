@@ -15,3 +15,8 @@ playwright/.cache/
 
 # Wizard resume state
 .testops-wizard-state.json
+
+## Local files 
+.ck/
+.ckignore
+.pi/
