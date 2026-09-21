@@ -20,7 +20,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "playwright test",
+    "test": "bddgen test && playwright test",
     "lint": "biome check .",
     "format": "biome check --write .",
     "bdd:generate": "bddgen test",
