@@ -114,7 +114,7 @@ jobs:
           }
           JSON
           http_code="$(
-            curl -sS --output /tmp/forge-running-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
+            curl -sS --retry 3 --retry-delay 2 --retry-connrefused --output /tmp/forge-running-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
             -H "authorization: Bearer $TESTOPS_FORGE_AUTH_TOKEN" \
             -H "content-type: application/json" \
             --data @/tmp/forge-running-status.json
@@ -165,7 +165,7 @@ jobs:
           }
           JSON
           http_code="$(
-            curl -sS --output /tmp/forge-final-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
+            curl -sS --retry 3 --retry-delay 2 --retry-connrefused --output /tmp/forge-final-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
             -H "authorization: Bearer $TESTOPS_FORGE_AUTH_TOKEN" \
             -H "content-type: application/json" \
             --data @/tmp/forge-final-status.json
