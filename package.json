@@ -1,0 +1,37 @@
+{
+  "name": "jira-testops-starter",
+  "version": "1.0.0",
+  "description": "Playwright + playwright-bdd starter wired for Automatify Jira TestOps: two sample BDD scenarios, a TestOps-ready GitHub Actions workflow, and a guided setup wizard.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaksimZinovev/jira-testops-starter.git"
+  },
+  "keywords": [
+    "playwright",
+    "playwright-bdd",
+    "bdd",
+    "jira",
+    "testops",
+    "starter-template"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "bdd:generate": "playwright-bdd generate",
+    "testops-wizard": "node scripts/testops-wizard.mjs"
+  },
+  "dependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@playwright/test": "1.63.0",
+    "playwright-bdd": "9.2.1"
+  },
+  "devDependencies": {
+    "@clack/prompts": "1.8.1"
+  }
+}
