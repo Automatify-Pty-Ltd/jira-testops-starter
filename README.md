@@ -4,6 +4,8 @@
 
 Docs: <https://automatify.com.au/docs/testops>
 
+![alt text](assets/jira-testops-scenarios-status.png)
+
 ## What's inside
 
 ```
