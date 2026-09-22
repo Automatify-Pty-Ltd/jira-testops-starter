@@ -1,0 +1,183 @@
+name: Automatify TestOps
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_key:
+        description: Jira project key
+        required: false
+        type: string
+      issue_key:
+        description: Jira issue key
+        required: false
+        type: string
+      jira_base_url:
+        description: Jira site base URL
+        required: false
+        type: string
+      testops_environment:
+        description: TestOps Forge environment
+        required: false
+        type: string
+      scenario_id:
+        description: Automatify scenario id
+        required: true
+        type: string
+      scenario_ref:
+        description: Human-readable scenario reference
+        required: true
+        type: string
+      scenario_ordinal:
+        description: Scenario ordinal inside the feature
+        required: false
+        type: string
+      scenario_name:
+        description: BDD scenario name
+        required: false
+        type: string
+      feature_name:
+        description: BDD feature name
+        required: false
+        type: string
+      steps:
+        description: BDD scenario steps as JSON array
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  TESTOPS_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+jobs:
+  testops:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Render dispatched scenario feature
+        if: ${{ inputs.steps != '' }}
+        env:
+          SCENARIO_STEPS_JSON: ${{ inputs.steps }}
+          SCENARIO_FEATURE_NAME: ${{ inputs.feature_name }}
+          SCENARIO_NAME: ${{ inputs.scenario_name }}
+        run: |
+          mkdir -p features
+          {
+            echo "Feature: ${SCENARIO_FEATURE_NAME:-Playwright docs}"
+            echo
+            echo "Scenario: ${SCENARIO_NAME:-Dispatched scenario}"
+            printf '%s' "$SCENARIO_STEPS_JSON" | jq -r '.[] | "    \(.keyword) \(.text)"'
+          } > features/dispatched.feature
+          cat features/dispatched.feature
+
+      - name: Generate BDD tests
+        run: npx bddgen test
+
+      - name: Report running status to Forge
+        if: ${{ inputs.project_key != '' && inputs.scenario_id != '' }}
+        env:
+          TESTOPS_PROJECT_KEY: ${{ inputs.project_key }}
+          TESTOPS_SCENARIO_ID: ${{ inputs.scenario_id }}
+          TESTOPS_FORGE_ENDPOINT: ${{ secrets.TESTOPS_FORGE_ENDPOINT }}
+          TESTOPS_FORGE_AUTH_TOKEN: ${{ secrets.TESTOPS_FORGE_AUTH_TOKEN }}
+        run: |
+          if [ -z "$TESTOPS_FORGE_ENDPOINT" ] || [ -z "$TESTOPS_FORGE_AUTH_TOKEN" ]; then
+            echo "Repo secrets TESTOPS_FORGE_ENDPOINT / TESTOPS_FORGE_AUTH_TOKEN are not set - add them under Settings -> Secrets and variables -> Actions (wizard Step 5)." >&2
+            exit 1
+          fi
+          cat > /tmp/forge-running-status.json <<JSON
+          {
+            "contract":"updateScenarioAutomationStatus",
+            "payload":{
+              "context":{"projectKey":"$TESTOPS_PROJECT_KEY"},
+              "scenarioId":"$TESTOPS_SCENARIO_ID",
+              "status":"running",
+              "externalRunId":"${GITHUB_RUN_ID}",
+              "externalRunUrl":"$TESTOPS_RUN_URL",
+              "responseStatus":202,
+              "responseSnippet":"GitHub Actions automatify-testops workflow is running"
+            }
+          }
+          JSON
+          http_code="$(
+            curl -sS --retry 3 --retry-delay 2 --retry-connrefused --output /tmp/forge-running-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
+            -H "authorization: Bearer $TESTOPS_FORGE_AUTH_TOKEN" \
+            -H "content-type: application/json" \
+            --data @/tmp/forge-running-status.json
+          )"
+          echo "Forge running-status callback HTTP status: ${http_code}"
+          cat /tmp/forge-running-status-response.json
+          echo
+          if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 300 ]; then
+            echo "Forge callback returned HTTP ${http_code}." >&2
+            exit 1
+          fi
+          jq -e '.ok == true' /tmp/forge-running-status-response.json > /dev/null || {
+            echo "Forge callback response does not contain ok:true." >&2
+            exit 1
+          }
+
+      - name: Run dispatched scenario
+        if: ${{ inputs.steps != '' }}
+        run: npx playwright test dispatched
+
+      - name: Run scenario by name (fallback)
+        if: ${{ inputs.steps == '' }}
+        env:
+          SCENARIO_NAME: ${{ inputs.scenario_name }}
+        run: npx playwright test --grep "$SCENARIO_NAME"
+
+      - name: Report final status to Forge
+        if: ${{ always() && inputs.project_key != '' && inputs.scenario_id != '' }}
+        env:
+          TESTOPS_PROJECT_KEY: ${{ inputs.project_key }}
+          TESTOPS_SCENARIO_ID: ${{ inputs.scenario_id }}
+          TESTOPS_STATUS: ${{ job.status == 'success' && 'passed' || job.status == 'cancelled' && 'cancelled' || 'failed' }}
+          TESTOPS_FORGE_ENDPOINT: ${{ secrets.TESTOPS_FORGE_ENDPOINT }}
+          TESTOPS_FORGE_AUTH_TOKEN: ${{ secrets.TESTOPS_FORGE_AUTH_TOKEN }}
+        run: |
+          cat > /tmp/forge-final-status.json <<JSON
+          {
+            "contract":"updateScenarioAutomationStatus",
+            "payload":{
+              "context":{"projectKey":"$TESTOPS_PROJECT_KEY"},
+              "scenarioId":"$TESTOPS_SCENARIO_ID",
+              "status":"${TESTOPS_STATUS}",
+              "externalRunId":"${GITHUB_RUN_ID}",
+              "externalRunUrl":"$TESTOPS_RUN_URL",
+              "responseStatus":200,
+              "responseSnippet":"GitHub Actions automatify-testops workflow finished with ${TESTOPS_STATUS}"
+            }
+          }
+          JSON
+          http_code="$(
+            curl -sS --retry 3 --retry-delay 2 --retry-connrefused --output /tmp/forge-final-status-response.json --write-out "%{http_code}" "$TESTOPS_FORGE_ENDPOINT" \
+            -H "authorization: Bearer $TESTOPS_FORGE_AUTH_TOKEN" \
+            -H "content-type: application/json" \
+            --data @/tmp/forge-final-status.json
+          )"
+          echo "Forge final-status callback HTTP status: ${http_code}"
+          cat /tmp/forge-final-status-response.json
+          echo
+          if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 300 ]; then
+            echo "Forge callback returned HTTP ${http_code}." >&2
+            exit 1
+          fi
+          jq -e '.ok == true' /tmp/forge-final-status-response.json > /dev/null || {
+            echo "Forge callback response does not contain ok:true." >&2
+            exit 1
+          }
