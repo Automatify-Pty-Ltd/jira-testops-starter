@@ -4,20 +4,30 @@
 
 Docs: <https://automatify.com.au/docs/testops>
 
+[What's inside](#whats-inside) • [Quickstart](#quickstart-guided-wizard) • [Agent](#prefer-an-agent) • [Local run](#run-the-sample-tests-locally-no-jira-needed) • [How runs work](#how-testops-runs-work) • [Troubleshooting](#troubleshooting)
+
 ![alt text](assets/jira-testops-scenarios-status.png)
 
 ## What's inside
 
-```
-features/playwright-docs.feature      2 sample scenarios against https://playwright.dev:
-                                      1 passes, 1 fails by design (see below)
-steps/playwright-docs.steps.ts        TypeScript step definitions the scenarios bind to
-playwright.config.ts                  chromium, list + junit reporters
-.github/workflows/automatify-testops.yml   workflow_dispatch-only workflow TestOps
-                                      triggers; declares the 10 dispatch inputs and
-                                      reports running/passed/failed/cancelled back to Jira
-scripts/testops-wizard.mjs            guided setup wizard (npm run testops-wizard)
-skills/testops-setup/                 agent skill: references + verify script
+```text
+jira-testops-starter/
+├── features/
+│   └── playwright-docs.feature     2 sample scenarios against playwright.dev:
+│                                   1 passes, 1 fails by design (see below)
+├── steps/
+│   └── playwright-docs.steps.ts    TypeScript step definitions the scenarios bind to
+├── .github/
+│   └── workflows/
+│       └── automatify-testops.yml  workflow_dispatch-only; declares the 10 dispatch
+│                                  inputs; reports running/passed/failed/cancelled to Jira
+├── scripts/
+│   └── testops-wizard.mjs          guided setup wizard (npm run testops-wizard)
+├── skills/
+│   └── testops-setup/              agent skill: SKILL.md + references + verify script
+├── playwright.config.ts            chromium, list + junit reporters
+├── package.json                    exact-pinned toolchain (Node >= 20); npm test / lint
+└── LICENSE                         MIT
 ```
 
 The "Expected-fail demo with wrong title" scenario asserts the page title
@@ -77,6 +87,15 @@ Point your coding agent at `skills/testops-setup/`. It guides the same setup
 with human-in-the-loop checkpoints at every Jira and GitHub browser action,
 never asks you to paste secret values into chat, and starts by running
 `node skills/testops-setup/scripts/verify-setup.mjs`.
+
+Sample session:
+
+```text
+You:   Use the testops-setup skill to wire this repo to our Jira TestOps project.
+Agent: Running verify-setup.mjs — 8/8 PASS. I'll guide the 10 setup steps with a
+       checkpoint at every Jira and GitHub action. First up: create the automation
+       profile (Step 2) — ready to open Jira?
+```
 
 ## Run the sample tests locally (no Jira needed)
 
