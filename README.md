@@ -1,16 +1,18 @@
-# jira-testops-starter
+# Jira Testops Starter
 
-[Playwright](https://playwright.dev) + [playwright-bdd](https://github.com/vitalets/playwright-bdd) starter wired for **Automatify Jira TestOps**: two sample BDD scenarios, a TestOps-ready GitHub Actions workflow, a guided setup wizard, and an agent skill. Run your BDD scenarios from Jira with **Run now** and see their status back on the issue.
+> From installation to automated BDD tests triggered from Jira and results displayed right there - in under 10 mins.  
+
+[What's inside](#whats-inside) • [Quickstart](#quickstart-guided-wizard) • [Agent](#prefer-an-agent) • [Local run](#run-the-sample-tests-locally-no-jira-needed) • [How runs work](#how-testops-runs-work) • [Troubleshooting](#troubleshooting)  
 
 Docs: <https://automatify.com.au/docs/testops>
 
-[What's inside](#whats-inside) • [Quickstart](#quickstart-guided-wizard) • [Agent](#prefer-an-agent) • [Local run](#run-the-sample-tests-locally-no-jira-needed) • [How runs work](#how-testops-runs-work) • [Troubleshooting](#troubleshooting)
-
-![alt text](assets/jira-testops-scenarios-status.png)
+![wizard](assets/wizard.png)
 
 ## What's inside
 
-```text
+[Playwright](https://playwright.dev) + [playwright-bdd](https://github.com/vitalets/playwright-bdd) starter wired for **Automatify Jira TestOps**: two sample BDD scenarios, a TestOps-ready GitHub Actions workflow, a guided setup wizard, and an agent skill. Run your BDD scenarios from Jira with **Run now** and see their status back on the issue.  
+
+```shell
 jira-testops-starter/
 ├── features/
 │   └── playwright-docs.feature     2 sample scenarios against playwright.dev:
@@ -31,7 +33,7 @@ jira-testops-starter/
 ```
 
 The "Expected-fail demo with wrong title" scenario asserts the page title
-contains "Wrong Expected Title" — it **fails by design** to prove that failure
+contains "Wrong Expected Title" - it **fails by design** to prove that failure
 reporting works end to end, not because the template is broken.
 
 ## Quickstart (guided wizard)
@@ -41,7 +43,7 @@ Requires Node.js >= 20 and a Jira site with the Automatify TestOps app installed
 1. Clone and install:
 
    ```bash
-   git clone https://github.com/MaksimZinovev/jira-testops-starter.git
+   git clone https://github.com/Automatify-Pty-Ltd/jira-testops-starter.git
    cd jira-testops-starter
    npm install
    ```
@@ -56,15 +58,15 @@ Requires Node.js >= 20 and a Jira site with the Automatify TestOps app installed
 
    Expected output (start):
 
-   ```text
+   ```shell
    ╭──────────────────────────────────────────────────────╮
    │                                                      │
-   │   Automatify TestOps — guided setup                  │
+   │   Automatify TestOps — guided setup                 │
    │   Connects this repo to your Jira TestOps project    │
    │   so BDD scenarios run from Jira via GitHub Actions. │
-   │   No CLI needed — you'll do a few steps in Jira and  │
+   │   No CLI needed — you'll do a few steps in Jira and │
    │   GitHub, and the wizard tells you exactly what.     │
-   │   Progress is saved after every step — quit anytime  │
+   │   Progress is saved after every step — quit anytime │
    │   and re-run this command to resume.                 │
    │                                                      │
    ╰──────────────────────────────────────────────────────╯
@@ -134,19 +136,18 @@ Required repository secrets (values come from the Jira "CLI" sub-tab via
 - `TESTOPS_FORGE_ENDPOINT`
 - `TESTOPS_FORGE_AUTH_TOKEN`
 
+![alt text](assets/jira-testops-scenarios-status.png)
+
 ## Troubleshooting
 
 | Symptom in Jira | Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | Status `failed` right after Run now; GitHub has no run | Workflow id wrong OR file not on default branch (404) | Fix Workflow id / Ref; commit workflow to default branch |
 | Status `failed` right after Run now; GitHub shows nothing | Workflow doesn't declare Forge's inputs (422) | Declare all 10 dispatch inputs (or set Inputs template) |
 | Status stuck `queued` (GitHub run fails at the Forge report step, or ran without reporting) | Repo secrets `TESTOPS_FORGE_ENDPOINT` / `TESTOPS_FORGE_AUTH_TOKEN` missing (workflow cannot call Forge) | Add the 2 repo secrets (wizard Step 5) |
 | "Automation profile limit reached" | Free tier = 1 profile | Edit/delete existing profile |
 | Run fails with "Missing step definitions" | Jira scenario steps differ from the template's step definitions | Paste the exact steps shown in wizard Step 6 |
 
-Free tier limits: 1 automation profile, 25 scenarios, 100 automation runs per
-month.
-
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
